@@ -9,6 +9,11 @@
             content="width=device-width, initial-scale=1, shrink-to-fit=no"
         />
 
+        <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.css" />
+  
+        <script src="https://cdn.datatables.net/2.0.7/js/dataTables.js"></script>
+
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
         <!-- Bootstrap CSS v5.2.1 -->
         <link
@@ -24,7 +29,7 @@
             }
 
             .table-height{
-                max-height: 400px;
+                max-height: 580px;
                 overflow-y: auto;
             }
         </style>
@@ -51,7 +56,6 @@
                                 <h3 class=>Tabla de Documentos</h3>
                             </div>
                             <div class="col-4 text-end">
-                                <input class="form-control" type="text" placeholder="Buscar">
                                 <a class="btn btn-primary mt-1" type="button" href="{{route('registerDocument')}}">
                                     <span>Subir Documento <i class="bi bi-plus-circle"></i></span>
                                 </a>
@@ -59,7 +63,7 @@
                         </div>
                     </div>
                     <div class="table-height">
-                        <table class="table table-bordered">
+                        <table id="myTable" class="table table-bordered">
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>
@@ -67,6 +71,7 @@
                                     <th scope="col">Codigo</th>
                                     <th scope="col">Tipo</th>
                                     <th scope="col">Proceso</th>
+                                    <th scope="col">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -148,7 +153,7 @@
                                         <div class="col-6 mt-2">
                                             <div class="form-group">
                                                 <label class="form-label">Tipo del documento:</label>
-                                                <select class="form-select" name="tipoDoc" id="tipoDocumento" required>
+                                                <select class="form-select" name="tipoDocumento" id="tipoDocumento" required>
                                                     <option disabled selected>Seleccione un Tipo de documento</option>
                                                     @foreach($tipTipoDoc as $tipo)
                                                     <option value="{{$tipo->TIP_ID}}">{{$tipo->TIP_NOMBRE}}</option>
@@ -197,7 +202,6 @@
         
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <!-- Bootstrap JavaScript Libraries -->
         <script
             src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
@@ -210,6 +214,31 @@
             integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
             crossorigin="anonymous"
         ></script>
+
+        <script>$(document).ready( function () {
+            $('#myTable').DataTable({
+                language: {
+                    "decimal": "",
+                    "emptyTable": "No hay información",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+                    "infoEmpty": "Mostrando 0 to 0 of 0 Entradas",
+                    "infoFiltered": "(Filtrado de _MAX_ total entradas)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Mostrar _MENU_ Entradas",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": "Buscar:",
+                    "zeroRecords": "Sin resultados encontrados",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Ultimo",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                },
+            });
+        } );</script>
 
         <script>
 

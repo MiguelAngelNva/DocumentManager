@@ -42,10 +42,10 @@ class GestorDocumentosController extends Controller
 
         $ultimoArchivo = Doc_documento::where('DOC_ID_TIPO', $idTipo)->where('DOC_ID_PROCESO', $idProceso)->orderBy("DOC_ID", 'desc')->first();
         $getProProceso = Pro_proceso::where('PRO_ID', $idProceso)->first();
-        $get_tip_tipo_doc = Tip_tipo_doc::where('TIP_ID', $idTipo)->first();
+        $getTipTipo = Tip_tipo_doc::where('TIP_ID', $idTipo)->first();
 
         $procesoPrefijo = $getProProceso->PRO_PREFIJO;
-        $tipoPrefijo = $get_tip_tipo_doc->TIP_PREFIJO;
+        $tipoPrefijo = $getTipTipo->TIP_PREFIJO;
 
         if ($ultimoArchivo) {
             $ultimoCodigo = $ultimoArchivo->DOC_CODIGO;
@@ -65,15 +65,16 @@ class GestorDocumentosController extends Controller
             "DOC_ID_PROCESO" => $idProceso
         ]);
 
-        return back()->with('success', 'Documento registrado exitosamente');
+        return redirect()->route('gestorDocumentos')->with('success', 'Documento registrado exitosamente');
 
     }
 
     public function editDocument(Request $request){
 
+        // Validacion de datos llegados del formulario
         $validacionDatos = $request->validate([
             'nombreDocumento' => 'required',
-            'tipoDoc' => 'required',
+            'tipoDocumento' => 'required',
             'procesoDocumento' => 'required',
             'contenidoDocumento' => 'required'
         ]);
@@ -83,28 +84,44 @@ class GestorDocumentosController extends Controller
             
         }
 
+        // obtencion de los Id 
         $idDoc = $request->documentId;
+        $idTipo = $request->tipoDocumento;
         $idProceso = $request->procesoDocumento;
-        $idTipo = $request->tipoDoc;
+        
+        // obtencion del documento que se está editando
+        $documentoActual = Doc_documento::where('DOC_ID', $idDoc)->first();
 
-        $ultimoArchivo = Doc_documento::where('DOC_ID_TIPO', $idTipo)->where('DOC_ID_PROCESO', $idProceso)->orderBy("DOC_ID", 'desc')->first();
-        $getProceso = Pro_proceso::where('PRO_ID', $idProceso)->first();
-        $getTipo = Tip_tipo_doc::where('TIP_ID', $idTipo)->first();
+        // Logica para verificar si el Tipo o Proceso han cambiado para el Codigo Unico
+        if($documentoActual->DOC_ID_TIPO !== $idTipo || $documentoActual->DOC_ID_PROCESO !== $idProceso){
+            // Logica SQL para obtener el ultimo archivo en donde coincida con el Tipo y proceso llegados del formulario
+            $ultimoArchivo = Doc_documento::where('DOC_ID_TIPO', $idTipo)->where('DOC_ID_PROCESO', $idProceso)->orderBy("DOC_ID", 'desc')->first();
+            
+            // Logica SQL para obtener los datos de las tablas Pro_proceso y Tip_tipo_doc que coincidan con los id llegados del formulario
+            $getProProceso = Pro_proceso::where('PRO_ID', $idProceso)->first();
+            $getTipTipo = Tip_tipo_doc::where('TIP_ID', $idTipo)->first();
 
-        $procesoPrefijo = $getProceso->PRO_PREFIJO;
-        $tipoPrefijo = $getTipo->TIP_PREFIJO;
+            // Logica para Obtener los prefijos dependiendo de los resultados llegados del formulario
+            $procesoPrefijo = $getProProceso->PRO_PREFIJO;
+            $tipoPrefijo = $getTipTipo->TIP_PREFIJO;
 
-        if ($ultimoArchivo) {
-            $ultimoCodigo = $ultimoArchivo->DOC_CODIGO;
-            $ultimoConsecutivo = (int) substr($ultimoCodigo, strrpos($ultimoCodigo, '-') + 1);
-            $nuevoConsecutivo = $ultimoConsecutivo + 1;
-        } else {
-            $nuevoConsecutivo = 1;
+            // Logica para obtener el nuevo numero que llevará el codigo Unico
+            if ($ultimoArchivo) {
+                $ultimoCodigo = $ultimoArchivo->DOC_CODIGO;
+                $ultimoConsecutivo = (int) substr($ultimoCodigo, strrpos($ultimoCodigo, '-') + 1);
+                $nuevoConsecutivo = $ultimoConsecutivo + 1;
+            } else {
+                $nuevoConsecutivo = 1;
+            }
+
+            $codigoUnico = "$tipoPrefijo-$procesoPrefijo-$nuevoConsecutivo";
+        }else{
+            // Si el Tipo o proceso no han cambiado, se dejará el mismo DOC_CODIGO que ya tenía el documento
+            $codigoUnico = $documentoActual->DOC_CODIGO;
         }
 
-        $codigoUnico = "$tipoPrefijo-$procesoPrefijo-$nuevoConsecutivo";
-
-        Doc_documento::where('DOC_ID', $idDoc)->update([
+        // Actualizado del documento actual 
+        $documentoActual->update([
             "DOC_NOMBRE" => $request->nombreDocumento,
             "DOC_CODIGO" => $codigoUnico,
             "DOC_CONTENIDO" => $request->contenidoDocumento,
@@ -112,8 +129,8 @@ class GestorDocumentosController extends Controller
             "DOC_ID_PROCESO" => $idProceso
         ]);
 
-        return back()->with('success', 'El documetno ha sido actualizado');
 
+        return back()->with('success', 'el documento ha sido actualizado');
     }
 
     public function eliminarDocumento(Request $request){
