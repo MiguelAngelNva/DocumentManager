@@ -52,6 +52,7 @@
                 </div>
             </div> 
         </main>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
         <!-- Bootstrap JavaScript Libraries -->
         <script
@@ -66,5 +67,14 @@
             crossorigin="anonymous"
         ></script>
         <!-- Bootstrap JavaScript Libraries end -->
+        @if(session('error'))
+            <script>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error de autenticación',
+                    text: '{{ session('error') }}'
+                });
+            </script>
+        @endif
     </body>
 </html>
