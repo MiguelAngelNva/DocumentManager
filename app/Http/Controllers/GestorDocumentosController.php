@@ -12,6 +12,7 @@ use App\Models\Doc_documento;
 class GestorDocumentosController extends Controller
 {
     public function gestorDocumentos(){
+        // Obtencion de contenidos de la base de datos para mandarla al front junto a la vista
         $documentos = Doc_documento::get();
         $proProceso = Pro_proceso::get();
         $tipTipoDoc = Tip_tipo_doc::get();
@@ -19,6 +20,7 @@ class GestorDocumentosController extends Controller
     }
 
     public function registerDocument(){
+        // Obtencion de contenidos de la base de datos para mandarla al front junto a la vista
         $proProceso = Pro_proceso::get();
         $tipTipoDoc = Tip_tipo_doc::get();
         return view('registerDocument')->with(compact('proProceso', 'tipTipoDoc'));
@@ -26,6 +28,7 @@ class GestorDocumentosController extends Controller
 
     public function saveDocument(Request $request){
 
+        // Validacion de datos llegados del formulario
         $validacionDatos = $request->validate([
             'nombreDocumento' => 'required',
             'tipoDoc' => 'required',
@@ -37,16 +40,22 @@ class GestorDocumentosController extends Controller
             return back()->with('error', 'Datos incompletos');
         }
 
+        // obtencion de los Id
         $idProceso = $request->procesoDocumento;
         $idTipo = $request->tipoDoc;
 
+        // Logica SQL para obtener el ultimo archivo en donde coincida con el Tipo y proceso llegados del formulario
         $ultimoArchivo = Doc_documento::where('DOC_ID_TIPO', $idTipo)->where('DOC_ID_PROCESO', $idProceso)->orderBy("DOC_ID", 'desc')->first();
+        
+        // Logica SQL para obtener los datos de las tablas Pro_proceso y Tip_tipo_doc que coincidan con los id llegados del formulario
         $getProProceso = Pro_proceso::where('PRO_ID', $idProceso)->first();
         $getTipTipo = Tip_tipo_doc::where('TIP_ID', $idTipo)->first();
 
+        // Logica para Obtener los prefijos dependiendo de los resultados llegados del formulario
         $procesoPrefijo = $getProProceso->PRO_PREFIJO;
         $tipoPrefijo = $getTipTipo->TIP_PREFIJO;
 
+        // Logica para obtener el nuevo número que llevará el codigo Unico
         if ($ultimoArchivo) {
             $ultimoCodigo = $ultimoArchivo->DOC_CODIGO;
             $ultimoConsecutivo = (int) substr($ultimoCodigo, strrpos($ultimoCodigo, '-') + 1);
@@ -55,8 +64,10 @@ class GestorDocumentosController extends Controller
             $nuevoConsecutivo = 1;
         }
 
+        // Estructura del codigo único
         $codigoUnico = "$tipoPrefijo-$procesoPrefijo-$nuevoConsecutivo";
         
+        // Creacion del nuevo documento
         Doc_documento::create([
             "DOC_NOMBRE" => $request->nombreDocumento,
             "DOC_CODIGO" => $codigoUnico,
@@ -105,7 +116,7 @@ class GestorDocumentosController extends Controller
             $procesoPrefijo = $getProProceso->PRO_PREFIJO;
             $tipoPrefijo = $getTipTipo->TIP_PREFIJO;
 
-            // Logica para obtener el nuevo numero que llevará el codigo Unico
+            // Logica para obtener el nuevo número que llevará el codigo Unico
             if ($ultimoArchivo) {
                 $ultimoCodigo = $ultimoArchivo->DOC_CODIGO;
                 $ultimoConsecutivo = (int) substr($ultimoCodigo, strrpos($ultimoCodigo, '-') + 1);
@@ -114,6 +125,7 @@ class GestorDocumentosController extends Controller
                 $nuevoConsecutivo = 1;
             }
 
+            // Estructura del codigo único
             $codigoUnico = "$tipoPrefijo-$procesoPrefijo-$nuevoConsecutivo";
         }else{
             // Si el Tipo o proceso no han cambiado, se dejará el mismo DOC_CODIGO que ya tenía el documento
@@ -134,12 +146,14 @@ class GestorDocumentosController extends Controller
     }
 
     public function eliminarDocumento(Request $request){
+
+        // Obtencion de los Id para buscar el  documento
         $idDoc = $request->id;
         $documento = Doc_documento::where('DOC_ID', $idDoc)->first();
 
+        // Logica de eliminacion de documentos
         if($documento){
             $documento->delete();
-
             return back()->with('success', 'el odcumento ha sido elminado correctamente');
         }else{
             return back()->with('error', 'No se ha encontrado el documento');
