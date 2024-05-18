@@ -12,6 +12,19 @@ class AuthController extends Controller
     }
 
     public function autentificacion(Request $request){
+
+        // Validacion de datos llegados del formulario
+        $validacionDatos = $request->validate([
+            'email' => 'required',
+            'password' => 'required'
+        ]);
+
+        if(!$validacionDatos){
+            return back()->with('error', 'Datos incompletos');
+            
+        }
+
+        // Logica para autentificar el usuario mediante email y contraseña
         if(Auth::attempt(["email" => $request->email, "password" => $request->password])){
             return redirect()->route('gestorDocumentos');
         }else{
@@ -20,6 +33,7 @@ class AuthController extends Controller
     }
 
     public function logout(){
+        // logica logout
         Auth::logout();
         return redirect()->route('login');
     }
