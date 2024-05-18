@@ -80,13 +80,13 @@
                                     <td>
                                         <ul class="list-inline me-auto mb-0">
                                             <li class="list-inline-item">
-                                                <a href="" onclick="cargarContenidoDocumentos({{$documento->DOC_ID}})" title="View Doc." data-bs-toggle="modal" data-bs-target="#viewDocument">
+                                                <a href="#" onclick="cargarContenidoDocumentos({{$documento->DOC_ID}})" title="View Doc." data-bs-toggle="modal" data-bs-target="#viewDocument">
                                                     <i class="bi bi-file-text"></i>
                                                 </a>
                                             </li>
 
                                             <li class="list-inline-item">
-                                                <a href="" title="Edit Doc." data-bs-toggle="modal" data-bs-target="#editDocument">
+                                                <a href="#" onclick="cargarContenidoDocumentos({{$documento->DOC_ID}})" title="Edit Doc." data-bs-toggle="modal" data-bs-target="#editDocument">
                                                     <i class="bi bi-pencil-square"></i>
                                                 </a>
                                             </li>
@@ -126,28 +126,66 @@
                 </div>
 
                 <div class="modal fade" id="editDocument" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
+                    <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+                                <h5 class="modal-title" id="exampleModalLabel">Editar Documento</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <div class="modal-body">
-                                <form>
-                                <div class="mb-3">
-                                    <label for="recipient-name" class="col-form-label">Recipient:</label>
-                                    <input type="text" class="form-control" id="recipient-name">
+
+                            <form action="{{route('editDocument')}}" method="post">
+                                @csrf
+                                <div class="modal-body">
+
+                                    <input type="hidden" name="documentId" id="documentId">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label class="form-label">Nombre del documento:</label>
+                                                <input id="nombreDocumento" name="nombreDocumento" type="text" class="form-control" placeholder="Nombre del documento" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-6 mt-2">
+                                            <div class="form-group">
+                                                <label class="form-label">Tipo del documento:</label>
+                                                <select class="form-select" name="tipoDoc" id="tipoDocumento" required>
+                                                    <option disabled selected>Seleccione un Tipo de documento</option>
+                                                    @foreach($tip_tipo_doc as $tipo)
+                                                    <option value="{{$tipo->TIP_ID}}">{{$tipo->TIP_NOMBRE}}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-6 mt-2">
+                                            <div class="form-group">
+                                                <label class="form-label">Proceso del documento:</label>
+                                                <select class="form-select" name="procesoDocumento" id="procesoDocumento" required>
+                                                    <option disabled selected>Seleccione un Proceso de documento</option>
+                                                    @foreach($pro_proceso as $proceso)
+                                                    <option value="{{$proceso->PRO_ID}}">{{$proceso->PRO_NOMBRE}}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label for="" class="form-label"></label>
+                                                <textarea class="form-control" name="contenidoDocumento" id="contenidoDocumento" rows="3" placeholder="Escriba el contenido del documento" required></textarea>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+
+                                
                                 </div>
-                                <div class="mb-3">
-                                    <label for="message-text" class="col-form-label">Message:</label>
-                                    <textarea class="form-control" id="message-text"></textarea>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Guardar</button>
                                 </div>
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary">Send message</button>
-                            </div>
+                            </form>
+                               
                         </div>
                     </div>
                 </div>
@@ -176,8 +214,15 @@
         <script>
 
             function cargandoContenido(){
-                    $("#tituloDocumento").html('<i class="bi bi-arrow-clockwise"></i>');
-                    $("#cargarContenidoDocumentos").html('<i class="bi bi-arrow-clockwise"></i>');
+                // Limpieza de datos en view Document 
+                $("#tituloDocumento").html('<i class="bi bi-arrow-clockwise"></i>');
+                $("#cargarContenidoDocumentos").html('<i class="bi bi-arrow-clockwise"></i>');
+
+                // limpeza de datos en Edit Document
+                $("#nombreDocumento").val("");
+                $("#tipoDocumento").val("");
+                $("#procesoDocumento").val("");
+                $("#contenidoDocumento").val("");
             }
 
             function cargarContenidoDocumentos(DOC_ID){
@@ -192,8 +237,16 @@
                     let data = res.data.documento;
                     console.log(data);
 
+                    //Cargar datos en view Document 
                     $("#tituloDocumento").html(data.DOC_NOMBRE);
                     $("#cargarContenidoDocumentos").html(data.DOC_CONTENIDO);
+
+                    // Cargar datos en Edit Document
+                    $("#nombreDocumento").val(data.DOC_NOMBRE);
+                    $("#tipoDocumento").val(data.DOC_ID_TIPO);
+                    $("#procesoDocumento").val(data.DOC_ID_PROCESO);
+                    $("#contenidoDocumento").val(data.DOC_CONTENIDO);
+                    $("#documentId").val(data.DOC_ID);
 
                 }).catch(e=>{
                     Swal.fire('','Ha ocurrido un error intentalo mas tarde','error');
