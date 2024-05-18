@@ -45,7 +45,7 @@
                                                 <label class="form-label">Tipo del documento:</label>
                                                 <select class="form-select" name="tipoDoc" id="" required>
                                                     <option disabled selected>Seleccione un Tipo de documento</option>
-                                                    @foreach($tip_tipo_doc as $tipo)
+                                                    @foreach($tipTipoDoc as $tipo)
                                                     <option value="{{$tipo->TIP_ID}}">{{$tipo->TIP_NOMBRE}}</option>
                                                     @endforeach
                                                 </select>
@@ -57,7 +57,7 @@
                                                 <label class="form-label">Proceso del documento:</label>
                                                 <select class="form-select" name="procesoDocumento" id="" required>
                                                     <option disabled selected>Seleccione un Proceso de documento</option>
-                                                    @foreach($pro_proceso as $proceso)
+                                                    @foreach($proProceso as $proceso)
                                                     <option value="{{$proceso->PRO_ID}}">{{$proceso->PRO_NOMBRE}}</option>
                                                     @endforeach
                                                 </select>

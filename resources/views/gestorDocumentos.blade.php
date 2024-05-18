@@ -93,7 +93,7 @@
 
 
                                             <li class="list-inline-item">
-                                                <a href="" title="Delete Doc.">
+                                                <a href="#" onclick="eliminarDocumento('{{route('eliminarDocumento', $id = $documento->DOC_ID)}}')" title="Delete Doc.">
                                                     <i class="bi bi-trash"></i>
                                                 </a>
                                             </li>
@@ -150,7 +150,7 @@
                                                 <label class="form-label">Tipo del documento:</label>
                                                 <select class="form-select" name="tipoDoc" id="tipoDocumento" required>
                                                     <option disabled selected>Seleccione un Tipo de documento</option>
-                                                    @foreach($tip_tipo_doc as $tipo)
+                                                    @foreach($tipTipoDoc as $tipo)
                                                     <option value="{{$tipo->TIP_ID}}">{{$tipo->TIP_NOMBRE}}</option>
                                                     @endforeach
                                                 </select>
@@ -162,7 +162,7 @@
                                                 <label class="form-label">Proceso del documento:</label>
                                                 <select class="form-select" name="procesoDocumento" id="procesoDocumento" required>
                                                     <option disabled selected>Seleccione un Proceso de documento</option>
-                                                    @foreach($pro_proceso as $proceso)
+                                                    @foreach($proProceso as $proceso)
                                                     <option value="{{$proceso->PRO_ID}}">{{$proceso->PRO_NOMBRE}}</option>
                                                     @endforeach
                                                 </select>
@@ -251,6 +251,22 @@
                 }).catch(e=>{
                     Swal.fire('','Ha ocurrido un error intentalo mas tarde','error');
                 });
+            }
+
+            function eliminarDocumento(route){
+                Swal.fire({
+                    title: "Estas seguro?",
+                    text: "Una vez eliminado no se podrá recuperar",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Eliminar"
+                }).then((result) => {
+                    if(result.isConfirmed){
+                        window.location = route;
+                    }
+                })
             }
         </script>
         

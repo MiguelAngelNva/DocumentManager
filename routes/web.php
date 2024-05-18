@@ -19,5 +19,6 @@ Route::middleware('auth')->group(function(){
     Route::post('/saveDocument', [GestorDocumentosController::class, 'saveDocument'])->name('saveDocument');
     Route::post('/cargarContenidoDocumentos', [servicesController::class, 'cargarContenidoDocumentos'])->name('cargarContenidoDocumentos');
     Route::post('/editDocument', [GestorDocumentosController::class, 'editDocument'])->name('editDocument');
+    Route::get('/eliminarDocumento/{id}', [GestorDocumentosController::class, 'eliminarDocumento'])->name('eliminarDocumento');
 });
 
