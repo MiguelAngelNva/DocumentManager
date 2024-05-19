@@ -6,7 +6,7 @@ use App\Http\Controllers\servicesController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('login');
 });
 
 Route::get('/login', [AuthController::class, 'login'])->name('login');
@@ -14,6 +14,7 @@ Route::post('/login', [AuthController::class, 'autentificacion'])->name('login')
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function(){
+    
     Route::get('/gestorDocumentos', [GestorDocumentosController::class, 'gestorDocumentos'])->name('gestorDocumentos');
     Route::get('/registerDocument', [GestorDocumentosController::class, 'registerDocument'])->name('registerDocument');
     Route::post('/saveDocument', [GestorDocumentosController::class, 'saveDocument'])->name('saveDocument');
