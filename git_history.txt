@@ -1,0 +1,10 @@
+b606b67 Agregando el usuario y la contraseña en el archivo README
+9d3b243 Correccion ortografico en el boton volver
+6f8a18d Agregado de Factories para la creacion de datos y pruebas Unitarias para comprobar las funciones CRUD del sistema
+45e3b86 Agregando comentarios para facilitar el entendimiento del codigo en el archivo AuthController
+e4093fb Agregando comentarios para facilitar el entendimiento del codigo en los archivos GestorDocumentosController y ServicesController
+6c96a0f agregando el archivo base para la herencia de plantillas
+097d171 Solucion de bug en el codigo Unico al momento de actualizar un documento y agregado de comentarios para la funcionalidad de cada seccion
+e359d45 Se agregó la funcionalidad de eliminar documentos
+825df8a Se agregó el formulario de editar documentos con su debida funcionalidad
+1f27116 Se agrega el proyecto
